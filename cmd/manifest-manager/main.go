@@ -32,6 +32,16 @@ func SetupApp() *cli.App {
 	app.Name = appName
 	app.Version = appVersion
 	app.Usage = appDesc
+
+	app.UsageText = fmt.Sprintf(
+		"manifest-manager [options] <manifest-file>\n\n%s%s%s%s%s",
+		"   examples:\n",
+		"      manifest-manager -l manifest.txt\n",
+		"      manifest-manager -a '/tmp/**/*' manifest.txt\n",
+		"      manifest-manager -d '/var/log/*.log' manifest.txt\n",
+		"      manifest-manager -c manifest.txt",
+	)
+
 	return app
 }
 
@@ -57,12 +67,46 @@ func ApplyFlags(app *cli.App) *cli.App {
 	return app
 }
 
+func GetUsageText(app *cli.App) string {
+	return fmt.Sprintf(
+		"\n\nUSAGE:\n%s%s", "   ", app.UsageText,
+	)
+}
+
+func GenerateFlagLists(addParam, deleteParam string, listFlag, cleanFlag bool) ([]string, []bool) {
+	_stringparams := []string{addParam, deleteParam}
+	stringparams := []string{}
+	for _, param := range _stringparams {
+		if param == "" {
+			continue
+		}
+		stringparams = append(stringparams, param)
+	}
+
+	_boolparams := []bool{listFlag, cleanFlag}
+	boolparams := []bool{}
+	for _, param := range _boolparams {
+		if param == false {
+			continue
+		}
+		boolparams = append(boolparams, param)
+	}
+
+	return stringparams, boolparams
+}
+
 func ApplyAction(app *cli.App) *cli.App {
 
 	app.Action = func(c *cli.Context) error {
 		if !c.Args().Present() {
 			err := errors.New("path to manifest file required!")
 			logger.Fatalln(err.Error())
+			return err
+		}
+
+		if len(c.Args()) > 1 {
+			err := errors.New("too many arguments encountered, try wrapping glob patterns in quotes")
+			logger.Fatalln(err.Error(), GetUsageText(app))
 			return err
 		}
 
@@ -74,6 +118,20 @@ func ApplyAction(app *cli.App) *cli.App {
 			listFlag    = c.Bool("list")
 			cleanFlag   = c.Bool("clean")
 		)
+
+		stringparams, boolparams := GenerateFlagLists(addParam, deleteParam, listFlag, cleanFlag)
+
+		if len(stringparams)+len(boolparams) > 1 {
+			err := errors.New("too many options encountered")
+			logger.Fatalln(err.Error(), GetUsageText(app))
+			return err
+		}
+
+		if len(stringparams)+len(boolparams) == 0 {
+			err := errors.New("no option found")
+			logger.Fatalln(err.Error(), GetUsageText(app))
+			return err
+		}
 
 		if !files.Exists(manifestFilePath) {
 			if err := manifestpkg.New(manifestFilePath).Save(); err != nil {
