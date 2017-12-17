@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  go:
+    build: ./
+    command: tail -f /dev/null
+    volumes:
+      - ./:/go/src/github.com/ultrabluewolf/manifest-manager
+    env_file: 
+      - .env
