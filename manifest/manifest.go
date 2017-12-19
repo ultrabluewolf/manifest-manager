@@ -76,7 +76,7 @@ func (manifest *Manifest) Prune() error {
 
 	count := 0
 	for _, fileItem := range fileList {
-		if !files.Exists(fileItem) {
+		if !files.Exists(fileItem) || files.IsDir(fileItem) {
 			manifest.Files[fileItem] = false
 			count += 1
 		}
