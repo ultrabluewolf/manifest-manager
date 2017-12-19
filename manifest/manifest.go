@@ -81,7 +81,7 @@ func (manifest *Manifest) Prune() error {
 			count += 1
 		}
 	}
-	logger.Info(fmt.Sprintf("removed %d stale files", count))
+	logger.Info(fmt.Sprintf("removed %d stale files / folders", count))
 
 	return nil
 }
@@ -120,7 +120,7 @@ func (manifest *Manifest) Add(pattern string) error {
 	if err != nil {
 		return err
 	}
-	logger.Info(fmt.Sprintf("found %d files", len(filepaths)))
+	logger.Info(fmt.Sprintf("found %d files / folders", len(filepaths)))
 
 	count := 0
 	for _, fileItem := range filepaths {
@@ -144,7 +144,7 @@ func (manifest *Manifest) Remove(pattern string) error {
 	if err != nil {
 		return err
 	}
-	logger.Info(fmt.Sprintf("found %d files", len(filepaths)))
+	logger.Info(fmt.Sprintf("found %d files / folders", len(filepaths)))
 
 	count := 0
 	for _, fileItem := range filepaths {
