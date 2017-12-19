@@ -131,6 +131,10 @@ func (manifest *Manifest) Add(pattern string) error {
 	}
 	logger.Info(fmt.Sprintf("added %d files", count))
 
+	if err = manifest.Prune(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -150,6 +154,10 @@ func (manifest *Manifest) Remove(pattern string) error {
 		manifest.Files[fileItem] = false
 	}
 	logger.Info(fmt.Sprintf("removed %d files", count))
+
+	if err = manifest.Prune(); err != nil {
+		return err
+	}
 
 	return nil
 }

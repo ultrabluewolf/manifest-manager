@@ -107,15 +107,17 @@ func ApplyAction(app *cli.App) *cli.App {
 			cleanFlag   = c.Bool("clean")
 		)
 
+		// validate options
 		stringparams, boolparams := GenerateFlagLists(addParam, deleteParam, listFlag, cleanFlag)
+		numParams := len(stringparams) + len(boolparams)
 
-		if len(stringparams)+len(boolparams) > 1 {
+		if numParams > 1 {
 			err := errors.New("too many options encountered")
 			logger.Fatalln(err.Error(), GetUsageText(app))
 			return err
 		}
 
-		if len(stringparams)+len(boolparams) == 0 {
+		if numParams == 0 {
 			err := errors.New("no option found")
 			logger.Fatalln(err.Error(), GetUsageText(app))
 			return err

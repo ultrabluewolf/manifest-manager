@@ -1,0 +1,3 @@
+../mocks/files/one.txt
+../mocks/files/three.log
+../mocks/files/two.out
