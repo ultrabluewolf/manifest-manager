@@ -24,6 +24,8 @@ Build and start container
 
 `docker-compose up`
 
+`docker-compose exec go ./bin/build.sh`
+
 And in a new tab run CLI:
 
 `docker-compose exec go manifest-manager -h`
@@ -44,8 +46,8 @@ Available env vars:
 
 #### Tests
 
-`docker-compose exec go go test`
+`docker-compose exec go ./bin/test.sh`
 
 or
 
-`go test`
+`./bin/test.sh`
